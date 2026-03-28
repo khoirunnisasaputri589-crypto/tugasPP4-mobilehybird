@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'WelcomePage.dart';
+import 'HomeScreen.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: WelcomePage(),
-  ));
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
+    );
+  }
 }

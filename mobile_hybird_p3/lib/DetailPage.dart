@@ -1,89 +1,220 @@
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatefulWidget {
-  final Map coffee;
-  DetailPage({required this.coffee});
+  final Map<String, dynamic> coffee;
+
+  const DetailPage({Key? key, required this.coffee}) : super(key: key);
 
   @override
-  _DetailPageState createState() => _DetailPageState();
+  State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
-  String size = 'M';
+
+  String size = "M";
 
   @override
   Widget build(BuildContext context) {
-    var coffee = widget.coffee;
+
+    final coffee = widget.coffee;
 
     return Scaffold(
       body: Column(
         children: [
+
+          /// IMAGE
           Stack(
             children: [
-              Image.asset(coffee['image'], height: 250, fit: BoxFit.cover),
+              Image.asset(
+                coffee["image"],
+                height: 350,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+
               Positioned(
-                top: 30,
-                left: 10,
+                top: 40,
+                left: 20,
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back,color: Colors.white),
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
                 ),
               )
             ],
           ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(coffee['name'],
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Text(coffee['desc']),
-                SizedBox(height: 10),
-                Text("Description"),
-                Text(
-                    "A cappuccino is an approximately 150 ml beverage with espresso and milk."),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    sizeBtn('S'),
-                    sizeBtn('M'),
-                    sizeBtn('L'),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("\$${coffee['price']}"),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Buy Now"),
-                    )
-                  ],
-                )
-              ],
+
+          /// CONTENT
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  /// NAME + RATING
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            coffee["name"],
+                            style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+
+                          Text(
+                            coffee["desc"],
+                            style: const TextStyle(
+                                color: Colors.grey
+                            ),
+                          )
+                        ],
+                      ),
+
+                      Row(
+                        children: const [
+                          Icon(Icons.star,color: Colors.orange),
+                          SizedBox(width: 5),
+                          Text("4.5"),
+                          Text("(2,330)")
+                        ],
+                      )
+
+                    ],
+                  ),
+
+                  const Divider(height: 30),
+
+                  /// DESCRIPTION
+                  const Text(
+                    "Description",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  const Text(
+                    "A cappuccino is an approximately 150 ml (5 oz) beverage, "
+                    "with 25 ml of espresso coffee and 85 ml of fresh milk.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// SIZE
+                  const Text(
+                    "Size",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Row(
+                    children: [
+                      sizeBtn("S"),
+                      sizeBtn("M"),
+                      sizeBtn("L"),
+                    ],
+                  ),
+
+                  const Spacer(),
+
+                  /// PRICE + BUTTON
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Price",style: TextStyle(color: Colors.grey)),
+                          Text(
+                            "\$${coffee["price"]}",
+                            style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange
+                            ),
+                          )
+                        ],
+                      ),
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 15
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)
+                          ),
+                        ),
+                        onPressed: (){},
+                        child: const Text(
+                          "Buy Now",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+
+                    ],
+                  )
+
+                ],
+              ),
             ),
           )
+
         ],
       ),
     );
   }
 
-  Widget sizeBtn(String s) {
+
+  /// SIZE BUTTON
+  Widget sizeBtn(String s){
+
     return GestureDetector(
-      onTap: () {
-        setState(() => size = s);
+      onTap: (){
+        setState(() {
+          size = s;
+        });
       },
+
       child: Container(
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          border: Border.all(color: size == s ? Colors.orange : Colors.grey),
+        margin: const EdgeInsets.only(right:10),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 25,
+            vertical: 10
         ),
-        child: Text(s),
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+              color: size == s ? Colors.orange : Colors.grey
+          ),
+        ),
+
+        child: Text(
+          s,
+          style: TextStyle(
+              color: size == s ? Colors.orange : Colors.black
+          ),
+        ),
       ),
     );
+
   }
 }

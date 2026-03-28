@@ -1,18 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
-  }
-}
+import 'DetailPage.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<Map<String, dynamic>> coffees = [
@@ -21,7 +8,7 @@ class HomeScreen extends StatelessWidget {
       "desc": "with Chocolate",
       "price": 4.53,
       "rating": 4.8,
-      "image": "assets/capucino -withcoklat2.jpeg"
+      "image": "assets/capucino-withcoklat2.jpeg"
     },
     {
       "name": "Cappuccino",
@@ -56,7 +43,7 @@ class HomeScreen extends StatelessWidget {
             header(),
             searchBar(),
             categoryTabs(),
-            Expanded(child: coffeeGrid())
+            Expanded(child: coffeeGrid(context)),
           ],
         ),
       ),
@@ -101,6 +88,7 @@ class HomeScreen extends StatelessWidget {
                 prefixIcon: Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(vertical: 10), // 🔥 lebih rapat
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide.none,
@@ -108,9 +96,9 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 10),
+          SizedBox(width: 8),
           Container(
-            padding: EdgeInsets.all(14),
+            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.orange,
               borderRadius: BorderRadius.circular(12),
@@ -126,15 +114,15 @@ class HomeScreen extends StatelessWidget {
     final categories = ["Cappuccino", "Macchiato", "Latte", "Americano"];
 
     return Container(
-      height: 40,
+      height: 36,
       margin: EdgeInsets.symmetric(horizontal: 16),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         itemBuilder: (context, index) {
           return Container(
-            margin: EdgeInsets.only(right: 10),
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            margin: EdgeInsets.only(right: 8),
+            padding: EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
               color: index == 0 ? Colors.orange : Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -143,6 +131,7 @@ class HomeScreen extends StatelessWidget {
             child: Text(
               categories[index],
               style: TextStyle(
+                fontSize: 13,
                 color: index == 0 ? Colors.white : Colors.black,
               ),
             ),
@@ -152,94 +141,110 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget coffeeGrid() {
+  Widget coffeeGrid(BuildContext context) {
     return GridView.builder(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(12),
       itemCount: coffees.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 15,
-        crossAxisSpacing: 15,
-        childAspectRatio: 0.75,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 0.65, // 🔥 proporsi lebih pas
       ),
       itemBuilder: (context, index) {
         final coffee = coffees[index];
 
-        return Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 500,
-                child: Stack(
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailPage(coffee: coffee),
+              ),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(12), // 🔥 lebih kecil
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // 🔥 penting biar tidak renggang
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 180, // 🔥 tidak terlalu besar tapi tetap jelas
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          coffee["image"],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
+                      Positioned(
+                        top: 5,
+                        left: 5,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 5, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.star,
+                                  color: Colors.yellow, size: 10),
+                              SizedBox(width: 2),
+                              Text(
+                                "${coffee["rating"]}",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 9),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  coffee["name"],
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                Text(
+                  coffee["desc"],
+                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                  maxLines: 1,
+                ),
+                SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        coffee["image"],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
+                    Text(
+                      "\$${coffee["price"]}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 13),
                     ),
-                    Positioned(
-                      top: 5,
-                      left: 5,
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.yellow, size: 12),
-                            SizedBox(width: 2),
-                            Text(
-                              "${coffee["rating"]}",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 10),
-                            ),
-                          ],
-                        ),
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(6),
                       ),
+                      child: Icon(Icons.add,
+                          color: Colors.white, size: 16),
                     )
                   ],
-                ),
-              ),
-              SizedBox(height: 1),
-              Text(
-                coffee["name"],
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                coffee["desc"],
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-                maxLines: 1,
-              ),
-              SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "\$${coffee["price"]}",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(Icons.add, color: Colors.white),
-                  )
-                ],
-              )
-            ],
+                )
+              ],
+            ),
           ),
         );
       },
